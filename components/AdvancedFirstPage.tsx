@@ -4,6 +4,7 @@ import { ArrowRightIcon, GlobeAmericasIcon, ShieldCheckIcon, TrendingUpIcon, Bui
 
 interface AdvancedFirstPageProps {
     onComplete: () => void;
+    onOpenAccount: () => void;
 }
 
 const BACKGROUND_IMAGES = [
@@ -65,7 +66,7 @@ const MarketTicker = () => (
     </div>
 );
 
-export const AdvancedFirstPage: React.FC<AdvancedFirstPageProps> = ({ onComplete }) => {
+export const AdvancedFirstPage: React.FC<AdvancedFirstPageProps> = ({ onComplete, onOpenAccount }) => {
     const [bgIndex, setBgIndex] = useState(0);
 
     useEffect(() => {
@@ -105,9 +106,9 @@ export const AdvancedFirstPage: React.FC<AdvancedFirstPageProps> = ({ onComplete
                     <span className="font-bold tracking-[0.2em] text-xs uppercase text-white/80">iCredit Union</span>
                 </div>
                 <div className="hidden md:flex gap-8 text-xs font-semibold uppercase tracking-widest text-white/70">
-                    <span className="hover:text-white cursor-pointer transition-colors">Private Banking</span>
-                    <span className="hover:text-white cursor-pointer transition-colors">Corporate</span>
-                    <span className="hover:text-white cursor-pointer transition-colors">Wealth Management</span>
+                    <span onClick={onComplete} className="hover:text-white cursor-pointer transition-colors">Private Banking</span>
+                    <span onClick={onComplete} className="hover:text-white cursor-pointer transition-colors">Corporate</span>
+                    <span onClick={onComplete} className="hover:text-white cursor-pointer transition-colors">Wealth Management</span>
                 </div>
                 <button onClick={onComplete} className="px-5 py-2 bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 rounded-full text-xs font-bold uppercase tracking-wider transition-all">
                     Client Login
@@ -144,7 +145,10 @@ export const AdvancedFirstPage: React.FC<AdvancedFirstPageProps> = ({ onComplete
                             <div className="absolute inset-0 bg-gradient-to-r from-slate-100 to-blue-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                         </button>
                         
-                        <button className="px-8 py-4 bg-transparent border border-white/30 hover:bg-white/5 text-white rounded-none rounded-tr-2xl rounded-bl-2xl font-bold text-sm uppercase tracking-wider backdrop-blur-sm transition-all duration-300 flex items-center gap-2 group">
+                        <button 
+                            onClick={onOpenAccount}
+                            className="px-8 py-4 bg-transparent border border-white/30 hover:bg-white/5 text-white rounded-none rounded-tr-2xl rounded-bl-2xl font-bold text-sm uppercase tracking-wider backdrop-blur-sm transition-all duration-300 flex items-center gap-2 group"
+                        >
                             <span>Open Account</span>
                         </button>
                     </div>

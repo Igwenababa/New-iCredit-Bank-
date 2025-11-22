@@ -509,7 +509,10 @@ export const Welcome: React.FC<WelcomeProps> = ({ onLogin, onStartCreateAccount 
             </div>
             
             <div className="text-center mt-8 relative z-10 animate-fade-in-up" style={{ animationDelay: '500ms' }}>
-                <button className="inline-flex items-center space-x-2 text-slate-400 hover:text-white transition-colors text-xs font-bold uppercase tracking-wider bg-black/40 backdrop-blur-md px-6 py-2 rounded-full border border-white/10 hover:border-white/30">
+                <button 
+                    onClick={() => setView('forgot_password')}
+                    className="inline-flex items-center space-x-2 text-slate-400 hover:text-white transition-colors text-xs font-bold uppercase tracking-wider bg-black/40 backdrop-blur-md px-6 py-2 rounded-full border border-white/10 hover:border-white/30"
+                >
                     <QuestionMarkCircleIcon className="w-4 h-4"/>
                     <span>Trouble Logging In?</span>
                 </button>

@@ -476,7 +476,7 @@ export const App: React.FC = () => {
   };
 
   if (loginState === 'intro') {
-      return <AdvancedFirstPage onComplete={() => setLoginState('welcome')} />;
+      return <AdvancedFirstPage onComplete={() => setLoginState('welcome')} onOpenAccount={() => setLoginState('account_creation')} />;
   }
   if (loginState === 'welcome') {
       return <Welcome onLogin={() => setLoginState('profile_signin')} onStartCreateAccount={() => setLoginState('account_creation')} />;
