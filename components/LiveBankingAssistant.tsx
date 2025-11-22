@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 // FIX: The `LiveSession` type is not an exported member of the SDK. It has been removed.
 import { GoogleGenAI, LiveServerMessage, Modality, FunctionDeclaration, Type, Blob, Chat } from "@google/genai";
@@ -119,7 +120,10 @@ export const LiveBankingAssistant: React.FC<LiveBankingAssistantProps> = ({ acco
 
     useEffect(scrollToBottom, [transcripts]);
     
-    const getAi = () => new GoogleGenAI({ apiKey: process.env.API_KEY as string });
+    const getAi = () => {
+        if (!process.env.API_KEY) return null;
+        return new GoogleGenAI({ apiKey: process.env.API_KEY });
+    };
 
     const executeFunctionCall = (name: string, args: any): string => {
         if (name === 'get_account_balance' && args.account_type) {
@@ -151,7 +155,16 @@ export const LiveBankingAssistant: React.FC<LiveBankingAssistantProps> = ({ acco
         setIsProcessingText(true);
 
         try {
-            let response = await chatSessionRef.current!.sendMessage({ message: text });
+            if (!chatSessionRef.current) {
+                 // Fallback simulation if no API key
+                 setTimeout(() => {
+                     setTranscripts(prev => [...prev, { role: 'model', text: "I am currently in demo mode because no API Key was provided. Please add an API Key to enable my AI features." }]);
+                     setIsProcessingText(false);
+                 }, 500);
+                 return;
+            }
+
+            let response = await chatSessionRef.current.sendMessage({ message: text });
             
             while(response.functionCalls && response.functionCalls.length > 0) {
                 const functionResponses = [];
@@ -162,10 +175,10 @@ export const LiveBankingAssistant: React.FC<LiveBankingAssistantProps> = ({ acco
                     });
                 }
                 // FIX: The `sendMessage` method expects a `message` property, not `parts`.
-                response = await chatSessionRef.current!.sendMessage({ message: functionResponses as any });
+                response = await chatSessionRef.current.sendMessage({ message: functionResponses as any });
             }
 
-            setTranscripts(prev => [...prev, { role: 'model', text: response.text }]);
+            setTranscripts(prev => [...prev, { role: 'model', text: response.text || "I didn't catch that." }]);
 
         } catch (error) {
             console.error("Chat API error:", error);
@@ -190,6 +203,13 @@ export const LiveBankingAssistant: React.FC<LiveBankingAssistantProps> = ({ acco
     const startVoiceSession = useCallback(async () => {
         setLiveStatus('connecting');
         const ai = getAi();
+        
+        if (!ai) {
+             setTranscripts(prev => [...prev, { role: 'model', text: "Voice mode requires an API Key." }]);
+             setLiveStatus('idle');
+             setMode('text');
+             return;
+        }
         
         inputAudioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)({ sampleRate: 16000 });
         outputAudioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)({ sampleRate: 24000 });
@@ -293,6 +313,11 @@ export const LiveBankingAssistant: React.FC<LiveBankingAssistantProps> = ({ acco
         if (isOpen && mode === 'text') {
             const ai = getAi();
             
+            if (!ai) {
+                setTranscripts([{ role: 'model', text: "AI features are currently disabled. Please configure an API Key to use the assistant." }]);
+                return;
+            }
+
             // History must be an even number of turns and not end with a user turn.
             let historyToPass = [...transcripts];
             if (historyToPass.length > 0 && historyToPass[historyToPass.length - 1].role === 'user') {
